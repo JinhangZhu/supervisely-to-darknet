@@ -25,7 +25,7 @@ def get_classes(read_name, write_name=None):
         # Write *.names file
         with open(write_name + 'classes.names', 'a') as nf:
             nf.write('{}\n'.format(class_name))
-    return classes
+    return classes, './classes.names'
   
 # Create folders: images and labels
 # https://github.com/ultralytics/JSON2YOLO/blob/177e96ad79bb1832c82dc3a1cec6681329ee1835/utils.py#L73
@@ -53,11 +53,14 @@ def split_paths(new_data_name, img_paths, split_shuffle, train_size, val_size):
     out_path = './' + new_data_name + os.sep
     train_ids, val_ids, test_ids = split_indices(img_paths, train_size, val_size, split_shuffle)
     datasets = {'train': train_ids, 'validation': val_ids, 'test': test_ids}
+    sets_paths = {} # Store the paths of subsets *.txt files
     for key, ids in datasets.items():
         if ids.any():
+            sets_paths[key] = './' + new_data_name + '_' + key + '.txt' # Store the key/path
             with open(out_path + new_data_name + '_' + key + '.txt', 'a') as wf:
                 for idx in tqdm(ids, desc=key + ' paths'):
                     wf.write('{}'.format(img_paths[idx]) + '\n')
+    return sets_paths
 
 
 # Convert from Supervisely format to darknet format.
@@ -68,7 +71,7 @@ def convert_supervisely_json(read_path, new_data_name, meta_file, split_shuffle,
     make_folders(out_path)
 
     # Write classes.names from meta.json
-    classes = get_classes(meta_file, out_path)
+    classes, names_path = get_classes(meta_file, out_path)
 
     # Get all file real paths
     read_path = read_path + os.sep
@@ -77,7 +80,7 @@ def convert_supervisely_json(read_path, new_data_name, meta_file, split_shuffle,
 
     # Import all json annotation files for images
     for (ann_path, img_path) in tqdm(zip(ann_paths, img_paths), desc='Annotations'):
-        label_name = os.path.basename(img_path) + '.txt'
+        label_name = os.path.basename(img_path)[:-4] + '.txt'
 
         # Import json
         with open(ann_path) as ann_f:
@@ -109,7 +112,15 @@ def convert_supervisely_json(read_path, new_data_name, meta_file, split_shuffle,
     
     # Split training set
     img_paths = sorted(glob.glob(out_path + 'images/' + '*.jpg'))
-    split_paths(new_data_name, img_paths, split_shuffle, train_size, val_size)
+    sets_paths = split_paths(new_data_name, img_paths, split_shuffle, train_size, val_size)
+
+    # Write .data file
+    with open(out_path + new_data_name + '.data', 'a') as data_f:
+        data_f.write('classes={}\n'.format(len(classes)))   # Classes count
+        data_f.write('train={}\n'.format(sets_paths['train']))   # Path of train set
+        data_f.write('valid={}\n'.format(sets_paths['validation'])) # Path of validation set
+        data_f.write('names={}\n'.format(names_path))   # Path of .names file
+
 
     # Summary
     print('Done. Dataset saved to %s' % (os.getcwd() + os.sep + new_data_name + os.sep))
