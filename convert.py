@@ -88,23 +88,24 @@ def convert_supervisely_json(read_path, new_data_name, meta_file, split_shuffle,
 
         # Objects bounding boxes
         bboxes = ann_data['objects']
-        for bbox in tqdm(bboxes, desc='Bounding boxes'):
-            class_index = classes.index(bbox['classTitle'])
-            corner_coords = bbox['points']['exterior']  # bbox corner coordinates in [[left, top], [right, bottom]]
+        if len(bboxes) != 0:    # With object(s)
+            for bbox in tqdm(bboxes, desc='Bounding boxes'):
+                class_index = classes.index(bbox['classTitle'])
+                corner_coords = bbox['points']['exterior']  # bbox corner coordinates in [[left, top], [right, bottom]]
 
-            # Normalisation
-            b_x_center = (corner_coords[0][0] + corner_coords[1][0]) / 2 / image_size['width']
-            b_y_center = (corner_coords[0][1] + corner_coords[1][1]) / 2 / image_size['height']
-            b_width = (corner_coords[1][0] - corner_coords[0][0]) / image_size['width']
-            b_height = (corner_coords[1][1] - corner_coords[0][1]) / image_size['height']
+                # Normalisation
+                b_x_center = (corner_coords[0][0] + corner_coords[1][0]) / 2 / image_size['width']
+                b_y_center = (corner_coords[0][1] + corner_coords[1][1]) / 2 / image_size['height']
+                b_width = (corner_coords[1][0] - corner_coords[0][0]) / image_size['width']
+                b_height = (corner_coords[1][1] - corner_coords[0][1]) / image_size['height']
 
-            # Write labels file
-            if (b_width > 0.) and (b_height > 0.):
-                with open(out_path + 'labels/' + label_name, 'a') as label_f:
-                    label_f.write('%d %.6f %.6f %.6f %.6f\n' % (class_index, b_x_center, b_y_center, b_width, b_height))
+                # Write labels file
+                if (b_width > 0.) and (b_height > 0.):
+                    with open(out_path + 'labels/' + label_name, 'a') as label_f:
+                        label_f.write('%d %.6f %.6f %.6f %.6f\n' % (class_index, b_x_center, b_y_center, b_width, b_height))
         
-        # Move images to images folder
-        shutil.copy(img_path, out_path + 'images/')
+            # Move images to images folder
+            shutil.copy(img_path, out_path + 'images/')
     
     # Split training set
     img_paths = sorted(glob.glob(out_path + 'images/' + '*.jpg'))
