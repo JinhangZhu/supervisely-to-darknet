@@ -60,10 +60,9 @@ Results:
     <tbody>
         <tr>
             <td>
-                <a href="https://github.com/jinhangzhu/robotics-fundamentals/graphs/contributors">
-  <img src="https://contributors-img.web.app/image?repo=jinhangzhu/robotics-fundamentals" />
+                <a href="https://github.com/jinhangzhu/supervisely-to-darknet/graphs/contributors">
+  <img src="https://contributors-img.web.app/image?repo=jinhangzhu/supervisely-to-darknet" />
 </a>
-            </td>
         </tr>
     </tbody>
 </table>
