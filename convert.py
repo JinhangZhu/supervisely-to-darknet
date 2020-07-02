@@ -1,3 +1,10 @@
+"""Create a the Supervisely dataset format into Darknet-COCO format.
+
+The standard Supervisely dataset format contains the images (*.jpg) 
+and the labels (*.json). This file converts the dataset as a folder 
+into another folder in Darket-COCO format.
+"""
+
 import argparse
 import glob
 import json
