@@ -17,7 +17,7 @@ from tqdm import tqdm
 
 # Get names of classes from meta.json and write them into *.names file
 # In reference to https://github.com/ultralytics/JSON2YOLO/blob/177e96ad79bb1832c82dc3a1cec6681329ee1835/run.py#L36
-def get_classes(read_name, write_name=None):
+def get_classes(read_name, write_name=None, write=True):
     # Import JSON
     with open(read_name) as f:
         data = json.load(f)
@@ -25,13 +25,14 @@ def get_classes(read_name, write_name=None):
     # Get classes from "classes" - "title" values
     classes_object = data['classes']
     classes = []
-    for class_object in tqdm(classes_object, desc="Names of classes"):
+    for class_object in classes_object:
         class_name = class_object['title']
         classes.append(class_name)
         
         # Write *.names file
-        with open(write_name + 'classes.names', 'a') as nf:
-            nf.write('{}\n'.format(class_name))
+        if write is True:
+            with open(write_name + 'classes.names', 'a') as nf:
+                nf.write('{}\n'.format(class_name))
     return classes, './classes.names'
   
 # Create folders: images and labels
