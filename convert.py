@@ -100,7 +100,7 @@ def convert_supervisely_json(read_path, new_data_name, meta_file, split_shuffle,
         # Objects bounding boxes
         bboxes = ann_data['objects']
         if len(bboxes) != 0:    # With object(s)
-            for bbox in tqdm(bboxes, desc='Bounding boxes'):
+            for bbox in bboxes:
                 class_index = classes.index(bbox['classTitle'])
                 corner_coords = bbox['points']['exterior']  # bbox corner coordinates in [[left, top], [right, bottom]]
 
@@ -136,18 +136,18 @@ def convert_supervisely_json(read_path, new_data_name, meta_file, split_shuffle,
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--origin', type=str, default='P30__P30_04', help='The name of original data downloaded from Supervisely.')
-    parser.add_argument('--out', type=str, default='P30', help='The name of the output dataset folder.')
-    parser.add_argument('--meta', type=str, default='meta.json', help='The name of the meta file of the data.')
-    parser.add_argument('--shuffle', action='store_true', help='Whether to randomly split image set.')
-    parser.add_argument('--train-size', type=float, default=0.9, help='Percentage of train set.')
-    parser.add_argument('--val-size', type=float, default=0.1, help='Percentage of validation set.')
+    parser.add_argument('-o', '--origin', type=str, default='P30__P30_04', help='The name of original data downloaded from Supervisely.')
+    parser.add_argument('-d', '--dest', type=str, default='P30', help='The name of the output dataset folder.')
+    parser.add_argument('-m', '--meta', type=str, default='meta.json', help='The name of the meta file of the data.')
+    parser.add_argument('-s', '--shuffle', action='store_true', help='Whether to randomly split image set.')
+    parser.add_argument('-t', '--train-size', type=float, default=0.9, help='Percentage of train set.')
+    parser.add_argument('-v', '--val-size', type=float, default=0.1, help='Percentage of validation set.')
     opt = parser.parse_args()
     print(opt)
 
     convert_supervisely_json(
         read_path = opt.origin,
-        new_data_name = opt.out,
+        new_data_name = opt.dest,
         meta_file = opt.meta,
         split_shuffle = opt.shuffle,
         train_size = opt.train_size,

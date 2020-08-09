@@ -11,7 +11,7 @@
 - [Usage](#usage)
 - [Contributors](#contributors)
 - [Maintainers](#maintainers)
-- [Thanks](#thanks)
+- [References](#references)
 - [License](#license)
 
 <!-- /TOC -->
@@ -29,30 +29,44 @@ Clone the repository to your local path:
 git clone https://github.com/JinhangZhu/supervisely-to-darknet.git
 ```
 
-Open the terminal on Linux or command window in Windows and run:
-
-```bash
-python convert.py --origin ...
-```
+Copy the `convert.py` file into your local folder where the Supervisely `meta.json` is located. Open the terminal on Linux or command window in Windows.
 
 help:
 
-- `--origin`: The name of original data downloaded from Supervisely.
-- `--out`: The name of the output dataset folder.
-- `--meta`: The name of the meta file of the data.
-- `--shuffle`: Whether to randomly split image set.
-- `--train-size`: Percentage of train set.
-- `--val-size`: Percentage of validation set.
+```shell
+>python convert.py -h
+usage: convert.py [-h] [-o ORIGIN] [-d DEST] [-m META] [-s] [-t TRAIN_SIZE]
+                  [-v VAL_SIZE]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -o ORIGIN, --origin ORIGIN
+                        The name of original data downloaded from Supervisely.
+  -d DEST, --dest DEST  The name of the output dataset folder.
+  -m META, --meta META  The name of the meta file of the data.
+  -s, --shuffle         Whether to randomly split image set.
+  -t TRAIN_SIZE, --train-size TRAIN_SIZE
+                        Percentage of train set.
+  -v VAL_SIZE, --val-size VAL_SIZE
+                        Percentage of validation set.
+```
 
 For example, I have a folder called: "P30__P30_04" in the current path, I want to create a dataset folder called "P30", with randomly splitted subsets at the ratio: `train:validation:test`=0.9:0.1:0. I run:
 
 ```bash
-python convert.py --origin 'P30__P30_04' --out 'new' --meta 'meta.json' --shuffle True --train-size 0.9 --val-size 0.1
+python convert.py --origin P30__P30_04 --out P30 --shuffle --train-size 0.9 --val-size 0.1
 ```
 
 Results:
 
-![](https://i.loli.net/2020/05/03/DRSMpJBNyv73o9C.png)
+```shell
+└───P30                                                                   		
+		├───images
+		├───labels
+				├───classes.names
+				├───P30_train.txt
+				├───P30_validation.txt
+```
 
 ## Contributors
 
